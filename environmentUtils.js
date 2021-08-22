@@ -1,4 +1,5 @@
 
+const { runMigration } = require('contentful-migration')
 
 function prodEnvId () {
     const d = new Date()
@@ -67,7 +68,6 @@ function createMigrationTypeIfNotExists () {
         const exists = await checkMigrationTypeExists()(env)
 
         if (!exists) {
-            console.log('Creating the migration type')
             await createMigrationType()(env)
         }
 
@@ -82,8 +82,6 @@ function getMigrations () {
         const { items } = await env.getEntries({
             content_type: 'migration'
         })
-
-        console.log(JSON.stringify(items, null, 4))
 
         const migrations = items
             .map(item => ({
@@ -100,8 +98,48 @@ function getMigrations () {
 
 }
 
+function createMigrationEntry (migration) {
+
+    return async env => {
+
+        const entry = await env.createEntry('migration', {
+            fields: {
+                version: {
+                    'en-US': migration.version,
+                },
+                name: {
+                    'en-US': migration.name
+                }
+            }
+        })
+
+        await entry.publish()
+
+    }
+
+}
+
+function processMigration (accessToken, migration) {
+
+    return async env => {
+
+        await runMigration({
+            filePath: migration.path,
+            spaceId: env.sys.space.sys.id,
+            accessToken: accessToken,
+            environmentId: env.sys.id,
+            yes: true
+        })
+
+        await createMigrationEntry(migration)(env)
+
+    }
+
+}
+
 module.exports = {
     getEnvId,
     createMigrationTypeIfNotExists,
-    getMigrations
+    getMigrations,
+    processMigration
 }

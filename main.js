@@ -7,6 +7,7 @@ const spaceUtils = require('./spaceUtils.js')
 const environmentUtils = require('./environmentUtils.js')
 const migrationUtils = require('./migrationUtils.js')
 
+
 async function main () {
 
     const isProd = true
@@ -41,21 +42,13 @@ async function main () {
 
     const nextUp = migrationUtils.matchMigrations(remoteMigrations, localMigrations)
 
-    console.log(nextUp)
+    for (const migration of nextUp) {
+        await environmentUtils.processMigration(config.accessToken, migration)(env)
+    }
 
-    // config
-    // get space
-    // check alias exists
-    // get new environment name
-    // check if environment exists
-    // delete environment
-    // clone env
-    // check migration type exists
-    // create migration type coniditional
-    // read migrations
-    // validate existing migrations
-    // run migration
-    // update version
+    if (isProd) {
+        await spaceUtils.realias('master', envId)(space)
+    }
 
 }
 

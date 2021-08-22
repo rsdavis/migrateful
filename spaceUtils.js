@@ -15,6 +15,18 @@ function assertAliasExists (aliasId) {
 
 }
 
+function realias (aliasId, envId) {
+
+    return async space => {
+
+        const alias = await space.getEnvironmentAlias(aliasId)
+        alias.environment.sys.id = envId
+        await alias.update()
+
+    }
+
+}
+
 function checkEnvironmentExists (envId) {
 
     return async space => {
@@ -67,5 +79,6 @@ function cloneEnvironment (envId) {
 module.exports = {
     assertAliasExists,
     checkEnvironmentExists,
-    cloneEnvironment
+    cloneEnvironment,
+    realias
 }

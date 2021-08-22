@@ -9,7 +9,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "contentful-migration": "^4.2.5",
+    "contentful-management": "^7.32.0",
+    "contentful-migration": "^4.3.0",
     "underscore": "^1.13.1"
   }
 }
