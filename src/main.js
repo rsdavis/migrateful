@@ -1,16 +1,26 @@
 
-const path = require('path')
 const contentful = require('contentful-management')
 
 const config = require('./config.js')
 const spaceUtils = require('./spaceUtils.js')
 const environmentUtils = require('./environmentUtils.js')
-const migrationUtils = require('./migrationUtils.js')
+const localMigration = require('./localMigration.js')
 
+function parseArgs (args) {
+
+    if (args && args.length === 3) {
+        return args[2]
+    }
+    else {
+        throw new Error("Invalid arguments")
+    }
+
+}
 
 async function main () {
 
-    const isProd = true
+    const envName = parseArgs(process.argv)
+    const isProd = envName === 'master'
 
     const client = contentful.createClient({
         accessToken: config.accessToken
@@ -20,7 +30,7 @@ async function main () {
 
     await spaceUtils.assertAliasExists('master')(space)
 
-    const envId = environmentUtils.getEnvId(isProd)
+    const envId = isProd ? environmentUtils.getEnvId(isProd) : envName
 
     const envExists = await spaceUtils.checkEnvironmentExists(envId)(space)
 
@@ -28,21 +38,20 @@ async function main () {
         throw new Error(`Environment already exists: ${envId}`)
     }
     else if (envExists) {
-        // delete environment
+        await spaceUtils.deleteEnvironment(envId)(space)
     }
 
     const env = await spaceUtils.cloneEnvironment(envId)(space)
 
     await environmentUtils.createMigrationTypeIfNotExists()(env)
 
-    const remoteMigrations = environmentUtils.getMigrations()(env)
+    const remoteMigrations = await environmentUtils.getMigrations()(env)
 
-    const migrationFolder = path.join(__dirname, 'migrations')
-    const localMigrations = await migrationUtils.getMigrations(migrationFolder)
+    const localMigrations = await localMigration.loadLocalMigrations()
 
-    const nextUp = migrationUtils.matchMigrations(remoteMigrations, localMigrations)
+    const migrations = localMigration.matchMigrations(remoteMigrations, localMigrations)
 
-    for (const migration of nextUp) {
+    for (const migration of migrations) {
         await environmentUtils.processMigration(config.accessToken, migration)(env)
     }
 
@@ -52,4 +61,9 @@ async function main () {
 
 }
 
-main()
+try {
+    main()
+}
+catch (err) {
+    console.error('Failed with error')
+}

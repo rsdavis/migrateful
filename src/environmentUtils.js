@@ -85,7 +85,7 @@ function getMigrations () {
 
         const migrations = items
             .map(item => ({
-                version: item.fields.version,
+                version: item.fields.version['en-US'],
                 name: item.fields.name['en-US']
             }))
             .sort((a, b) => {

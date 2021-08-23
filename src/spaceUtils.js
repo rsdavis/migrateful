@@ -75,10 +75,20 @@ function cloneEnvironment (envId) {
 
 }
 
+function deleteEnvironment (envId) {
+
+    return async space => {
+        const env = await space.getEnvironment(envId)
+        await env.delete()
+    }
+
+}
+
 
 module.exports = {
     assertAliasExists,
     checkEnvironmentExists,
     cloneEnvironment,
+    deleteEnvironment,
     realias
 }
