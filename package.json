@@ -1,8 +1,9 @@
 {
-  "name": "contentful-migration-manager",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "migrateful",
+  "version": "0.0.1",
+  "description": "A migration manager for the Contenful platform",
+  "keywords": ["contentful", "migration"],
+  "main": "src/main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -12,5 +13,10 @@
     "contentful-management": "^7.32.0",
     "contentful-migration": "^4.3.0",
     "underscore": "^1.13.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rsdavis/migrateful",
+    "directory": "/"
   }
 }
