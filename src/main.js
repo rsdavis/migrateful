@@ -18,10 +18,22 @@ function parseArgs (args) {
 
 }
 
+function createReleaseId () {
+
+    const sub = (new Date())
+        .toISOString()
+        .substr(0, 19)
+        .replaceAll('T', '.')
+        .replaceAll(':', '-')
+    
+    return `release.${sub}`
+
+}
+
 async function main () {
 
     const envName = parseArgs(process.argv)
-    const isProd = envName === 'master'
+    const isProd = envName === 'master' || envName === 'main'
 
     const client = contentful.createClient({
         accessToken: config.accessToken
@@ -31,7 +43,7 @@ async function main () {
 
     await spaceUtils.assertAliasExists('master')(space)
 
-    const envId = isProd ? environmentUtils.getEnvId(isProd) : envName
+    const envId = isProd ? createReleaseId() : envName
 
     const envExists = await spaceUtils.checkEnvironmentExists(envId)(space)
 

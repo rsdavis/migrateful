@@ -1,23 +1,6 @@
 
 const { runMigration } = require('contentful-migration')
 
-function prodEnvId () {
-    const d = new Date()
-    const sub = d.toISOString().substr(0, 10)
-    const h = String(d.getUTCHours()).padStart(2, '0')
-    const m = String(d.getUTCMinutes()).padStart(2, '0')
-    const s = String(d.getUTCSeconds()).padStart(2, '0')
-    return `release-${sub}.${h}-${m}-${s}`
-}
-
-function devEnvId () {
-    return 'dev'
-}
-
-function getEnvId (isProd) {
-    return isProd ? prodEnvId() : devEnvId()
-}
-
 function checkMigrationTypeExists () {
 
     return async env => {
@@ -138,7 +121,6 @@ function processMigration (accessToken, migration) {
 }
 
 module.exports = {
-    getEnvId,
     createMigrationTypeIfNotExists,
     getMigrations,
     processMigration
