@@ -18,16 +18,10 @@ function parseArgs (args) {
 
 }
 
-function createReleaseId () {
-
-    const sub = (new Date())
-        .toISOString()
-        .substr(0, 19)
-        .replaceAll('T', '.')
-        .replaceAll(':', '-')
-    
-    return `release.${sub}`
-
+function createReleaseId (migrations) {
+    const maxVersion = migrations.reduce((acc, m) => Math.max(acc, m.version), 0)
+    const strVersion = String(maxVersion).padStart(3, '0')
+    return `release-${strVersion}`
 }
 
 async function main () {
@@ -43,33 +37,39 @@ async function main () {
 
     await spaceUtils.assertAliasExists('master')(space)
 
-    const envId = isProd ? createReleaseId() : envName
+    const master = await space.getEnvironment('master')
 
-    const envExists = await spaceUtils.checkEnvironmentExists(envId)(space)
-
-    if (envExists && isProd) {
-        throw new Error(`Environment already exists: ${envId}`)
-    }
-    else if (envExists) {
-        await spaceUtils.deleteEnvironment(envId)(space)
-    }
-
-    const env = await spaceUtils.cloneEnvironment(envId)(space)
-
-    await environmentUtils.createMigrationTypeIfNotExists()(env)
-
-    const remoteMigrations = await environmentUtils.getMigrations()(env)
+    const remoteMigrations = await environmentUtils.getMigrations()(master)
 
     const localMigrations = await localMigration.loadLocalMigrations()
 
     const migrations = localMigration.matchMigrations(remoteMigrations, localMigrations)
 
-    for (const migration of migrations) {
-        await environmentUtils.processMigration(config.accessToken, migration)(env)
-    }
+    if (migrations.length || !isProd) {
 
-    if (isProd) {
-        await spaceUtils.realias('master', envId)(space)
+        const envId = isProd ? createReleaseId(migrations) : envName
+
+        const envExists = await spaceUtils.checkEnvironmentExists(envId)(space)
+
+        if (envExists && isProd) {
+            throw new Error(`Environment already exists: ${envId}`)
+        }
+        else if (envExists) {
+            await spaceUtils.deleteEnvironment(envId)(space)
+        }
+
+        const env = await spaceUtils.cloneEnvironment(envId)(space)
+
+        await environmentUtils.createMigrationTypeIfNotExists()(env)
+
+        for (const migration of migrations) {
+            await environmentUtils.processMigration(config.accessToken, migration)(env)
+        }
+
+        if (isProd) {
+            await spaceUtils.realias('master', envId)(space)
+        }
+
     }
 
 }
