@@ -34,7 +34,7 @@ You will need the `SpaceID` and a personal access token
     * Name the token and copy the key
 
 * Opt into the master alias
-    * Go to `Settings -> Environments`
+    * Go to `Settings` &rightarrow; `Environments`
     * Click `Set up your first alias`
     * It will ask to rename the master environment ... say yes
 
@@ -57,6 +57,6 @@ npx migrateful <env>
 Migrateful will read your space ID and access token from the environment.
 
 ```
-CONTENTFUL_SPACE_ID=<spaceId>
-CONTENTFUL_ACCESS_TOKEN=<token>
+export CONTENTFUL_SPACE_ID=<spaceId>
+export CONTENTFUL_ACCESS_TOKEN=<token>
 ```
