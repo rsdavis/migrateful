@@ -1,6 +1,6 @@
 {
   "name": "migrateful",
-  "version": "0.0.8",
+  "version": "0.1.0",
   "description": "A migration manager for the Contenful platform",
   "keywords": [
     "contentful",
@@ -15,7 +15,8 @@
   "dependencies": {
     "contentful-management": "^7.47.2",
     "contentful-migration": "^4.6.0",
-    "underscore": "^1.13.1"
+    "underscore": "^1.13.1",
+    "uuid": "^8.3.2"
   },
   "repository": {
     "type": "git",

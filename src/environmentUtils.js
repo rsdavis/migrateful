@@ -62,6 +62,8 @@ function getMigrations () {
 
     return async env => {
 
+        await createMigrationTypeIfNotExists()(env)
+
         const { items } = await env.getEntries({
             content_type: 'migration'
         })

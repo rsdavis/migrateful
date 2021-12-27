@@ -33,14 +33,21 @@ async function main () {
         accessToken: config.accessToken
     })
 
+    console.log('get space')
     const space = await client.getSpace(config.spaceId)
 
+
+    console.log('assert alias')
     await spaceUtils.assertAliasExists('master')(space)
 
+    console.log('get master')
     const master = await space.getEnvironment('master')
+    console.log('master: ', master)
 
+    console.log('remote migrations')
     const remoteMigrations = await environmentUtils.getMigrations()(master)
 
+    console.log('local migrations')
     const localMigrations = await localMigration.loadLocalMigrations()
 
     const migrations = localMigration.matchMigrations(remoteMigrations, localMigrations)
