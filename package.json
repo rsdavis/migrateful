@@ -1,6 +1,6 @@
 {
   "name": "migrateful",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "A migration manager for the Contenful platform",
   "keywords": [
     "contentful",
