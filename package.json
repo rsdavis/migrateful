@@ -1,6 +1,6 @@
 {
   "name": "migrateful",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "A migration manager for the Contenful platform",
   "keywords": [
     "contentful",
@@ -13,8 +13,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "contentful-management": "^7.36.1",
-    "contentful-migration": "^4.3.0",
+    "contentful-management": "^7.47.2",
+    "contentful-migration": "^4.6.0",
     "underscore": "^1.13.1"
   },
   "repository": {
